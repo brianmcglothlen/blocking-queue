@@ -61,9 +61,9 @@ public class MyBlockingQueue<T> implements com.blockingqueue.BlockingQueue<T> {
 ```
 final BlockingQueue<TestData> blockingQueue = new MyBlockingQueue<>(maxQueueItems);
 ...  
-thread1.put(<someObject>);
+thread1.put(<TestData>);
 ...
-SomeObject someobject = thread2.get();  
+TestData testData = thread2.get();  
 ```
 
 # Tests
