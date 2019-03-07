@@ -14,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutionException;
 
+import static java.lang.Thread.sleep;
 import static junit.framework.TestCase.assertTrue;
 
 public class BlockingQueueTest {
@@ -30,7 +31,7 @@ public class BlockingQueueTest {
   }
 
   /**
-   * Test reading and writing to Blocked queue.
+   * Test reading and writing to Blocked queue with many threads at once.
    */
   @Test
   public void testMultiThreadingQueue() {
@@ -49,7 +50,7 @@ public class BlockingQueueTest {
           try {
             TestData testData;
             while ((testData = blockingQueue.get()) != null) {
-              logger.info("getting: {}:{}", testData.getThreadName(), testData.getIteration());
+              logger.info("get: {}:{}", testData.getThreadName(), testData.getIteration());
               checkData.remove(testData);
             }
           } catch (InterruptedException e) {
@@ -68,7 +69,7 @@ public class BlockingQueueTest {
             for (Integer j = 0; j < messageCount; j++) {
               TestData testData = new TestData(Thread.currentThread().getName(), j);
               checkData.add(testData);
-              logger.info("putting: {}", testData.getIteration());
+              logger.info("put: {}", testData.getIteration());
               blockingQueue.put(testData);
             }
           } catch (InterruptedException e) {
@@ -92,7 +93,7 @@ public class BlockingQueueTest {
       readingThreads.forEach( thread -> {
         try {
           while (thread.getState() != Thread.State.WAITING) {
-            Thread.sleep(100);
+            sleep(100);
           }
           thread.interrupt();
         } catch (InterruptedException e) {
@@ -104,6 +105,50 @@ public class BlockingQueueTest {
       assertTrue("Didn't remove all queued items.", checkData.size()==0);
     } catch (Exception e) {
       assertTrue(e.getMessage(), false);
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Test a single thread to demonstrate that blocking works.
+   */
+  @Test
+  public void testBlocking() {
+    final BlockingQueue<TestData> blockingQueue = new MyBlockingQueue<>(maxQueueItems);
+
+    // Prepare reader thread and wait
+    Thread thread = new Thread(() -> {
+      try {
+        TestData testData;
+        sleep(10000);
+        while ((testData = blockingQueue.get()) != null) {
+          logger.info("get: {}:{}", testData.getThreadName(), testData.getIteration());
+        }
+      } catch (InterruptedException e) {
+        logger.info("interrupted normally");
+      }
+    });
+    thread.start();
+
+    // Start putting data
+    try {
+      for (Integer j = 0; j < messageCount; j++) {
+        TestData testData = new TestData(Thread.currentThread().getName(), j);
+        logger.info("put: {}", testData.getIteration());
+        blockingQueue.put(testData);
+      }
+    } catch (InterruptedException e) {
+      assertTrue(e.getMessage(), false);
+      e.printStackTrace();
+    }
+
+    // Cleanup reader thread
+    try {
+      while (thread.getState() != Thread.State.WAITING) {
+        sleep(100);
+      }
+      thread.interrupt();
+    } catch (InterruptedException e) {
       e.printStackTrace();
     }
   }
