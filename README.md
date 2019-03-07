@@ -62,7 +62,7 @@ final BlockingQueue<TestData> blockingQueue = new MyBlockingQueue<>(maxQueueItem
 ...  
 thread1.put(<someObject>);
 ...
-SomeObject someobject thread2.get();  
+SomeObject someobject = thread2.get();  
 ```
 
 # Tests
