@@ -1,5 +1,5 @@
 # Blocking Queue
-Implement a blocking queue where the queue has a limited size and the put blocks if the queue is full, and the get blocks if the queue is empty.
+Implement a blocking queue where the queue has a limited size and the *put* API blocks if the queue is full, and the *get* API blocks if the queue is empty.
 
 # Purpose
 Demonstrate how to use wait() and notifyAll() to protect a shared resource that isn't protected in a multi-threaded environment. What makes this a bit challenging is the requirement to create a blocking queue that has a limited number of positions available in the queue. This means simply using a semaphore to protect the queue is impossible, because once the you are inside the semaphore blocked waiting for the queue, the other semaphore is also blocked. This would create a deadlock.
