@@ -21,6 +21,7 @@ public class MyBlockingQueue<T> implements com.blockingqueue.BlockingQueue<T> {
     this.limit = limit;
   }
 
+  @Override
   public synchronized void put(T item) throws InterruptedException  {
     while (queue.size() == limit) {
       // Wait
@@ -35,6 +36,7 @@ public class MyBlockingQueue<T> implements com.blockingqueue.BlockingQueue<T> {
     queue.add(item);
   }
 
+  @Override
   public synchronized T get() throws InterruptedException {
     while (queue.size() == 0){
       wait();
