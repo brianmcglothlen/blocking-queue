@@ -4,6 +4,7 @@ Implement a blocking queue where the queue has a limited size and the *put* API 
 # Purpose
 Demonstrate how to use wait() and notifyAll() to protect a shared resource that isn't protected in a multi-threaded environment. What makes this a bit challenging is the requirement to create a blocking queue that has a limited number of positions available in the queue. This means simply using a semaphore to protect the queue is impossible, because once the you are inside the semaphore blocked waiting for the queue, the other semaphore is also blocked. This would create a deadlock.
 
+*Note*
 Implementing a blocking queue is for demonstration puposes only, since there already is a blocking queue implementation in Java found here: https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/LinkedBlockingQueue.html.
 
 # API
